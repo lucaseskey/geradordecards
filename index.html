@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gerador de Cards - Jarvis Imobiliária</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Montserrat', sans-serif; background: #f5f5f5; color: #333; display: flex; justify-content: center; padding: 20px; }
+    .container { display: flex; flex-wrap: wrap; gap: 20px; max-width: 1024px; width: 100%; }
+    .form { flex: 1 1 320px; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .form h2 { font-size: 1.5rem; margin-bottom: 16px; color: #E94F1C; }
+    .form label { display: block; margin-top: 12px; font-weight: 500; }
+    .form input, .form button { width: 100%; margin-top: 8px; }
+    .form input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+    .form button { padding: 12px; background: #E94F1C; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+    .form button:hover { background: #c43e12; }
+    .preview { width: 360px; height: 640px; position: relative; background: #ddd; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .bgImage { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
+    .header { position: absolute; top: 115px; left: 20px; background: #E94F1C; padding: 12px 16px; }
+    .header h1, .header p { margin: 0; color: #fff; }
+    .header h1 { font-size: 20px; }
+    .header p { font-size: 14px; margin-top: 4px; }
+    .info { position: absolute; top: 200px; left: 20px; background: rgba(255,255,255,0.9); padding: 8px 12px; display: flex; gap: 16px; align-items: center; }
+    .info span { font-size: 14px; font-weight: 500; color: #333; }
+    .descBox { position: absolute; bottom: 180px; left: 20px; right: 20px; background: #E94F1C; padding: 10px; font-size: 14px; color: #fff; font-weight: 500; }
+    .priceBox { position: absolute; bottom: 120px; left: 20px; right: 20px; background: #E94F1C; padding: 12px; font-size: 32px; color: #fff; font-weight: 700; text-align: left; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="form">
+      <h2>Criação de Cards</h2>
+      <label>Imagem de Fundo</label>
+      <input type="file" id="imageInput" accept="image/*">
+      <label>Nome</label>
+      <input type="text" id="titleInput" maxlength="20" placeholder="Ex: ED. BACCARAT">
+      <label>Localização</label>
+      <input type="text" id="subtitleInput" maxlength="30" placeholder="Ex: PONTA VERDE - MACEIÓ/AL">
+      <label>M²</label>
+      <input type="number" id="sizeInput" max="99999" placeholder="Ex: 82">
+      <label>Quartos/Suítes</label>
+      <input type="text" id="roomsInput" maxlength="20" placeholder="Ex: 3/4 sendo 1 suíte">
+      <label>Descrição</label>
+      <input type="text" id="descInput" maxlength="50" placeholder="Ex: Na Av. Profº Sandoval...">
+      <label>Preço (R$)</label>
+      <input type="text" id="priceInput" maxlength="11" placeholder="Ex: 650.000">
+      <button id="downloadStoryBtn">Baixar Stories (PNG)</button>
+      <button id="downloadFeedBtn">Baixar Feed (PNG)</button>
+    </div>
+    <div class="preview" id="cardPreview">
+      <div class="bgImage" id="bgImage"></div>
+      <div class="header">
+        <h1 id="titleText">ED. BACCARAT</h1>
+        <p id="subtitleText">PONTA VERDE - MACEIÓ/AL</p>
+      </div>
+      <div class="info">
+        <span>📏 <strong id="sizeText">82</strong> m²</span>
+        <span id="roomsText"><strong>3</strong>/ <strong>4</strong> sendo <strong>1</strong> suíte</span>
+      </div>
+      <div class="descBox" id="descText">Na Av. Profº Sandoval...</div>
+      <div class="priceBox" id="priceText">R$ 650.000</div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const mapping = { titleInput:'titleText', subtitleInput:'subtitleText', sizeInput:'sizeText', descInput:'descText', priceInput:'priceText' };
+      Object.entries(mapping).forEach(([inp,txt])=> document.getElementById(inp).addEventListener('input',e=>{
+        const v=inp==='priceInput' ? (e.target.value? 'R$ '+e.target.value:'') : e.target.value;
+        document.getElementById(txt).textContent = v || document.getElementById(inp).placeholder;
+      }));
+      document.getElementById('roomsInput').addEventListener('input',e=>{
+        const raw = e.target.value;
+        const html = raw.replace(/(\d+)/g,'<strong>$1</strong>');
+        document.getElementById('roomsText').innerHTML = html || document.getElementById('roomsInput').placeholder.replace(/(\d+)/g,'<strong>$1</strong>');
+      });
+      document.getElementById('imageInput').addEventListener('change',e=>{
+        const file = e.target.files[0]; if(!file) return;
+        const reader = new FileReader(); reader.onload = ev => document.getElementById('bgImage').style.backgroundImage = `url(${ev.target.result})`;
+        reader.readAsDataURL(file);
+      });
+      const cap = el => html2canvas(el,{useCORS:true,scale:10});
+      document.getElementById('downloadStoryBtn').addEventListener('click',() => cap(document.getElementById('cardPreview')).then(c=> c.toBlob(b=>{const l=document.createElement('a');l.download='stories.png';l.href=URL.createObjectURL(b);l.click();})));
+      document.getElementById('downloadFeedBtn').addEventListener('click',() => cap(document.getElementById('cardPreview')).then(c=>{const f=document.createElement('canvas');f.width=1080;f.height=1350;const ctx=f.getContext('2d');const y=95*10,h=450*10;ctx.drawImage(c,0,y,c.width,h,0,0,1080,1350);f.toBlob(b=>{const l=document.createElement('a');l.download='feed.png';l.href=URL.createObjectURL(b);l.click();});}));
+    });
+  </script>
+</body>
+</html>
