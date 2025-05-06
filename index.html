@@ -51,7 +51,7 @@
     <div class="preview" id="cardPreview">
       <div class="bgImage" id="bgImage"></div>
       <div class="header"><h1 id="titleText">ED. BACCARAT</h1><p id="subtitleText">PONTA VERDE - MACEIÓ/AL</p></div>
-      <div class="info"><span><strong id="sizeText">82</strong> m²</span><span id="roomsText"><strong>3</strong>/ <strong>4</strong> sendo <strong>1</strong> suíte</span></div>
+      <div class="info"><span>📏 <strong id="sizeText">82</strong> m²</span><span id="roomsText"><strong>3</strong>/ <strong>4</strong> sendo <strong>1</strong> suíte</span></div>
       <div class="descBox" id="descText">Na Av. Profº Sandoval...</div>
       <div class="priceBox" id="priceText">R$ 650.000</div>
     </div>
@@ -77,6 +77,7 @@
       Object.entries(map).forEach(([inp, txt]) => {
         const el = document.getElementById(inp);
         const target = document.getElementById(txt);
+        // initialize
         target.textContent = (inp === 'priceInput' ? 'R$ ' : '') + el.placeholder;
         el.addEventListener('input', e => {
           const v = e.target.value || el.placeholder;
@@ -87,6 +88,7 @@
         const raw = e.target.value || e.target.placeholder;
         document.getElementById('roomsText').innerHTML = raw.replace(/(\d+)/g, '<strong>$1</strong>');
       });
+      // init rooms
       document.getElementById('roomsText').innerHTML = document.getElementById('roomsInput').placeholder.replace(/(\d+)/g, '<strong>$1</strong>');
       function downloadCanvas(canvas, filename) {
         canvas.toBlob(blob => {
