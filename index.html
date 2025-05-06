@@ -22,7 +22,23 @@
     .header h1, .header p { color: #fff; margin: 0; }
     .header h1 { font-size: 20px; }
     .header p { font-size: 14px; margin-top: 4px; }
-    .info { position: absolute; top: 185px; left: 20px; background: rgba(255,255,255,0.9); padding: 6px 10px; display: flex; gap: 12px; font-size: 14px; font-weight: 500; }
+    .info {
+      position: absolute;
+      top: 185px;
+      left: 20px;
+      background: rgba(255,255,255,0.9);
+      padding: 6px 10px;
+      display: flex;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+    /* Ajusta verticalmente o segundo span (quartos) */
+    .info span:nth-child(2) {
+      margin-top: 2px;
+    }
     .descBox { position: absolute; bottom: 190px; left: 20px; display: inline-block; background: #E94F1C; padding: 6px; font-size: 13px; color: #fff; font-weight: 500; }
     .priceBox { position: absolute; bottom: 130px; left: 20px; display: inline-block; background: #E94F1C; padding: 12px 16px; font-size: 30px; color: #fff; font-weight: 700; }
   </style>
@@ -77,7 +93,6 @@
       Object.entries(map).forEach(([inp, txt]) => {
         const el = document.getElementById(inp);
         const target = document.getElementById(txt);
-        // initialize
         target.textContent = (inp === 'priceInput' ? 'R$ ' : '') + el.placeholder;
         el.addEventListener('input', e => {
           const v = e.target.value || el.placeholder;
@@ -88,7 +103,6 @@
         const raw = e.target.value || e.target.placeholder;
         document.getElementById('roomsText').innerHTML = raw.replace(/(\d+)/g, '<strong>$1</strong>');
       });
-      // init rooms
       document.getElementById('roomsText').innerHTML = document.getElementById('roomsInput').placeholder.replace(/(\d+)/g, '<strong>$1</strong>');
       function downloadCanvas(canvas, filename) {
         canvas.toBlob(blob => {
